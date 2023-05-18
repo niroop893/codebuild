@@ -8,7 +8,8 @@ phases:
       - apt-get update && apt-get install jq -y
       - aws --version 
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - aws configure list-profiles
+      - aws configure list-profiles >> profile.txt
+      - cat profile.txt
   build:
     commands:
       - echo Build started on `date`
@@ -21,5 +22,6 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - aws ecr describe-repositories | jq -r '.repositories[].repositoryName'
+      - aws ecr describe-repositories | jq -r '.repositories[].repositoryName' >> repo.txt
+      - cat repo.txt
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
